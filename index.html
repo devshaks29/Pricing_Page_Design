@@ -1,0 +1,662 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>StockWire X - High-Conversion Pricing</title>
+    <!-- Load Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Load Fonts (Poppins for Headers/Accent, Inter for Body) -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght=400;600;700;800&family=Inter:wght=300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        /* Custom Tailwind Configuration for Brand Colors & Fonts */
+        :root {
+            --color-navy: #051230;
+            --color-orange: #E77E22;
+            --color-gold: #EDBF54;
+            --color-bg-light: #f4f6f9;
+        }
+
+        /* Applying Custom Fonts */
+        .font-poppins { font-family: 'Poppins', sans-serif; }
+        .font-inter { font-family: 'Inter', sans-serif; }
+
+        /* Custom Colors in Tailwind */
+        .bg-navy { background-color: var(--color-navy); }
+        .text-navy { color: var(--color-navy); }
+        .bg-orange { background-color: var(--color-orange); }
+        .text-orange { color: var(--color-orange); }
+        .bg-gold { background-color: var(--color-gold); }
+        .text-gold { color: var(--color-gold); }
+        .bg-bg-light { background-color: var(--color-bg-light); }
+
+        /* Custom Toggle Styling for High Visual Impact */
+        .toggle-container {
+            border: 2px solid var(--color-navy);
+            background-color: white;
+        }
+        .toggle-button {
+            transition: all 0.3s ease;
+            cursor: pointer;
+            user-select: none;
+        }
+        .toggle-active {
+            background-color: var(--color-navy);
+            color: white;
+            font-weight: 600;
+            box-shadow: 0 4px 10px rgba(5, 18, 48, 0.2);
+        }
+        .toggle-inactive {
+            color: var(--color-navy);
+        }
+
+        /* Custom Scrollbar for the table on mobile */
+        .scroll-container::-webkit-scrollbar {
+            height: 6px;
+        }
+        .scroll-container::-webkit-scrollbar-thumb {
+            background: rgba(5, 18, 48, 0.3); /* Navy transparent */
+            border-radius: 3px;
+        }
+        
+        /* Gold Card Gradient for a premium look */
+        .gold-gradient {
+            background: linear-gradient(145deg, #091c49, #051230);
+        }
+
+    </style>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'primary-navy': '#051230',
+                        'accent-orange': '#E77E22',
+                        'accent-gold': '#EDBF54',
+                        'bg-light': '#f4f6f9',
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                        poppins: ['Poppins', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="font-inter bg-bg-light text-primary-navy">
+    
+    <!-- SVG Icon Definitions for cleaner look (used in pricing cards/table) -->
+    <svg style="display: none;">
+        <symbol id="icon-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="20 6 9 17 4 12"></polyline>
+        </symbol>
+        <symbol id="icon-x" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="18" y1="6" x2="6" y2="18"></line>
+            <line x1="6" y1="6" x2="18" y2="18"></line>
+        </symbol>
+        <!-- Icons for Footer (reusing Lucide/Feather styles) -->
+        <symbol id="icon-map" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <polygon points="1 6 1 22 8 18 16 22 23 18 23 2 16 6 8 2 1 6"></polygon>
+            <line x1="16" y1="6" x2="16" y2="22"></line>
+            <line x1="8" y1="2" x2="8" y2="18"></line>
+        </symbol>
+        <symbol id="icon-phone" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6.73-6.73 19.79 19.79 0 0 1-3.07-8.63A2 2 0 0 1 3.08 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path>
+        </symbol>
+        <symbol id="icon-mail" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path>
+            <polyline points="22,6 12,13 2,6"></polyline>
+        </symbol>
+        <!-- Social Icons (simple square style) -->
+        <symbol id="icon-facebook" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"></path>
+        </symbol>
+        <symbol id="icon-twitter" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M23 3a10.9 10.9 0 0 1-3.14 1.53 4.48 4.48 0 0 0-7.86 3v1A10.66 10.66 0 0 1 3 4s-4 9 5 13a11.64 11.64 0 0 1-7 2c9 5 20 0 20-11.5a4.5 4.5 0 0 0-.08-.83A7.72 7.72 0 0 0 23 3z"></path>
+        </symbol>
+        <symbol id="icon-linkedin" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"></path>
+            <rect x="2" y="9" width="4" height="12"></rect>
+            <circle cx="4" cy="4" r="2"></circle>
+        </symbol>
+        <symbol id="icon-youtube" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M22.54 6.42a2.78 2.78 0 0 0-1.94-2A54.48 54.48 0 0 0 12 4c-2.73 0-5.45.15-8.6.42a2.78 2.78 0 0 0-1.94 2C1 8 1 12 1 12s0 4 1.46 5.58a2.78 2.78 0 0 0 1.94 2c3.15.27 5.87.42 8.6.42s5.45-.15 8.6-.42a2.78 2.78 0 0 0 1.94-2C23 16 23 12 23 12s0-4-.46-5.58z"></path>
+            <polygon points="10 15 15 12 10 9 10 15"></polygon>
+        </symbol>
+        <symbol id="icon-instagram" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect>
+            <path d="M16 11.37A4 4.01 0 0 1 12.63 15 4 4.01 0 0 1 9 11.37 4 4.01 0 0 1 12.63 7 4 4.01 0 0 1 16 11.37z"></path>
+            <line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line>
+        </symbol>
+        <symbol id="icon-tiktok" viewBox="0 0 24 24" fill="currentColor">
+            <path d="M22.05 7.828c.11.028.169.074.169.135V10.1c0 .06-.058.106-.168.134-2.812.72-5.748 1.055-8.775 1.055-3.028 0-6.02-.335-8.832-1.055-.109-.028-.168-.074-.168-.134V7.963c0-.06.059-.107.168-.135 2.812-.72 5.748-1.055 8.775-1.055 3.027 0 6.02.335 8.832 1.055zm0 5.48c.11.028.169.074.169.135V15.58c0 .06-.058.106-.168.134-2.812.72-5.748 1.055-8.775 1.055-3.028 0-6.02-.335-8.832-1.055-.109-.028-.168-.074-.168-.134v-2.14c0-.06.059-.107.168-.135 2.812-.72 5.748-1.055 8.775-1.055 3.027 0 6.02.335 8.832 1.055zm0 5.48c.11.028.169.074.169.135V20.93c0 .06-.058.106-.168.134-2.812.72-5.748 1.055-8.775 1.055-3.028 0-6.02-.335-8.832-1.055-.109-.028-.168-.074-.168-.134v-2.14c0-.06.059-.107.168-.135 2.812-.72 5.748-1.055 8.775-1.055 3.027 0 6.02.335 8.832 1.055z"/>
+        </symbol>
+        <symbol id="icon-threads" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M18 10h-2c-2.2 0-4 1.8-4 4s1.8 4 4 4h2a2 2 0 0 0 2-2v-4a2 2 0 0 0-2-2z"></path>
+            <path d="M12 4a8 8 0 0 0 0 16"></path>
+            <path d="M6 10h-2c-2.2 0-4 1.8-4 4s1.8 4 4 4h2a2 2 0 0 0 2-2v-4a2 2 0 0 0-2-2z"></path>
+        </symbol>
+    </svg>
+
+    <!-- Helper function to render icons -->
+    <script>
+        const getIcon = (id, color) => `
+            <svg class="w-5 h-5 ${color}" aria-hidden="true">
+                <use xlink:href="#${id}"></use>
+            </svg>
+        `;
+        // Re-implementing getIcon globally for the new footer icons
+        window.getIcon = (id, color) => `<svg class="w-5 h-5 ${color} mr-2 flex-shrink-0" aria-hidden="true"><use xlink:href="#${id}"></use></svg>`;
+    </script>
+
+    <!-- Header & Hero Section (existing code...) -->
+    <header class="bg-white shadow-lg">
+        <div class="max-w-7xl mx-auto p-4 flex justify-between items-center">
+            <!-- Logo -->
+            <img src="https://storage.googleapis.com/stock-wire-x-dev-wordpress-media/757a9f3f-stockwire-x-logo.png" alt="StockWire X Logo" class="h-8 sm:h-10">
+            <a href="#" class="px-5 py-2.5 bg-accent-orange text-white font-poppins text-base rounded-xl shadow-lg hover:bg-opacity-90 transition duration-300 transform hover:scale-[1.05]">Contact Sales</a>
+        </div>
+    </header>
+
+    <main class="max-w-7xl mx-auto px-4 py-16 sm:py-24">
+        <!-- Main Headline and Subtitle (Increased size for modern impact) -->
+        <div class="text-center mb-16">
+            <h1 class="text-5xl sm:text-6xl lg:text-7xl font-poppins font-extrabold text-primary-navy mb-4 leading-tight tracking-tight">
+                Packages Built for <span class="text-accent-orange">ASX Success</span>
+            </h1>
+            <p class="text-xl sm:text-2xl text-gray-600 max-w-4xl mx-auto font-light">
+                Select the right media coverage plan to transform your ASX announcements into professional, instant articles and videos.
+            </p>
+        </div>
+
+        <!-- Trust Signals / Social Proof -->
+        <section class="mb-20 text-center border-t border-b border-gray-200 py-8">
+            <p class="text-sm font-semibold uppercase tracking-widest text-gray-500 mb-6">Trusted by leading ASX-listed companies and IR teams</p>
+            <!-- Mock Client Logos -->
+            <div class="flex flex-wrap justify-center items-center gap-10 opacity-70">
+                <img src="https://placehold.co/120x40/EDBF54/051230?text=Client+A" alt="Client Logo A" class="h-10 grayscale hover:grayscale-0 transition duration-300">
+                <img src="https://placehold.co/120x40/EDBF54/051230?text=Client+B" alt="Client Logo B" class="h-10 grayscale hover:grayscale-0 transition duration-300">
+                <img src="https://placehold.co/120x40/EDBF54/051230?text=Client+C" alt="Client Logo C" class="h-10 grayscale hover:grayscale-0 transition duration-300">
+                <img src="https://placehold.co/120x40/EDBF54/051230?text=Client+D" alt="Client Logo D" class="h-10 grayscale hover:grayscale-0 transition duration-300 hidden sm:block">
+            </div>
+        </section>
+
+        <!-- Pricing Toggle & Savings Callout -->
+        <div class="flex justify-center mb-16 relative">
+            <div id="pricing-toggle" class="toggle-container flex p-1 rounded-full text-base sm:text-lg font-inter shadow-xl">
+                <div data-plan="quarterly" class="toggle-button p-3 px-8 rounded-full toggle-active">Quarterly</div>
+                <div data-plan="annual" class="toggle-button p-3 px-8 rounded-full toggle-inactive">Annual</div>
+            </div>
+            <!-- Annual Savings Callout -->
+            <div id="savings-badge" class="absolute -top-12 sm:-top-16 left-1/2 transform -translate-x-1/2 bg-accent-orange text-white text-sm sm:text-base font-poppins font-bold py-1.5 px-4 rounded-full shadow-2xl transition-opacity duration-300 hidden rotate-2">
+                40% SAVINGS
+            </div>
+        </div>
+
+        <!-- Pricing Cards Section -->
+        <section class="grid grid-cols-1 md:grid-cols-3 gap-8 lg:gap-12 mb-24">
+
+            <!-- Card 1: Bronze -->
+            <div id="bronze-card" class="bg-white rounded-3xl shadow-xl p-8 flex flex-col transition-all duration-500 hover:shadow-2xl ring-2 ring-transparent hover:ring-primary-navy/10 hover:scale-[1.02]">
+                <h2 class="text-3xl font-poppins font-bold mb-2 text-primary-navy">Bronze</h2>
+                <p class="text-gray-500 mb-6 font-medium">Essential media coverage for start-ups.</p>
+
+                <div class="flex items-end mb-8">
+                    <span id="bronze-price" class="text-5xl font-poppins font-extrabold text-primary-navy">$999</span>
+                    <span id="bronze-period" class="ml-2 text-2xl text-gray-500 font-light">/ Quarter</span>
+                </div>
+
+                <a href="#" class="cta-button w-full text-center py-3.5 rounded-xl border-2 border-primary-navy text-primary-navy font-poppins text-lg font-semibold hover:bg-primary-navy hover:text-white transition duration-300 shadow-md hover:shadow-lg">
+                    Start Bronze
+                </a>
+
+                <p class="mt-4 mb-6 text-sm text-center text-gray-500 font-medium">Money-back guarantee. Cancel anytime.</p>
+
+                <ul class="space-y-4 flex-grow mt-6">
+                    <li class="flex items-start text-base font-medium">
+                        <span class="mr-3 text-green-500"><svg class="w-5 h-5 text-green-500"><use xlink:href="#icon-check"></use></svg></span>Automated Article Generation
+                    </li>
+                    <li class="flex items-start text-base font-medium">
+                        <span class="mr-3 text-green-500"><svg class="w-5 h-5 text-green-500"><use xlink:href="#icon-check"></use></svg></span>Publish to StockWire X Website
+                    </li>
+                    <li class="flex items-start text-base font-medium">
+                        <span class="mr-3 text-green-500"><svg class="w-5 h-5 text-green-500"><use xlink:href="#icon-check"></use></svg></span>Basic Social Channel Distribution
+                    </li>
+                    <li class="flex items-start text-base font-medium text-gray-400">
+                        <span class="mr-3 text-gray-400"><svg class="w-5 h-5 text-gray-400"><use xlink:href="#icon-x"></use></svg></span>Automated Video Generation
+                    </li>
+                    <li class="flex items-start text-base font-medium text-gray-400">
+                        <span class="mr-3 text-gray-400"><svg class="w-5 h-5 text-gray-400"><use xlink:href="#icon-x"></use></svg></span>Dedicated Account Manager
+                    </li>
+                    <li class="flex items-start text-base font-medium text-gray-400">
+                        <span class="mr-3 text-gray-400"><svg class="w-5 h-5 text-gray-400"><use xlink:href="#icon-x"></use></svg></span>Priority Feature Access
+                    </li>
+                </ul>
+            </div>
+
+            <!-- Card 2: Silver -->
+            <div id="silver-card" class="bg-white rounded-3xl shadow-xl p-8 flex flex-col transition-all duration-500 hover:shadow-2xl ring-2 ring-transparent hover:ring-accent-gold/50 hover:scale-[1.02]">
+                <h2 class="text-3xl font-poppins font-bold mb-2 text-primary-navy">Silver</h2>
+                <p class="text-gray-500 mb-6 font-medium">Comprehensive coverage for growing companies.</p>
+
+                <div class="flex items-end mb-8">
+                    <span id="silver-price" class="text-5xl font-poppins font-extrabold text-primary-navy">$1,999</span>
+                    <span id="silver-period" class="ml-2 text-2xl text-gray-500 font-light">/ Quarter</span>
+                </div>
+
+                <a href="#" class="cta-button w-full text-center py-3.5 rounded-xl bg-primary-navy text-white font-poppins text-lg font-semibold shadow-xl hover:bg-opacity-95 transition duration-300 transform hover:scale-[1.01]">
+                    Start Silver
+                </a>
+
+                <p class="mt-4 mb-6 text-sm text-center text-gray-500 font-medium">Money-back guarantee. Cancel anytime.</p>
+
+                <ul class="space-y-4 flex-grow mt-6">
+                    <li class="flex items-start text-base font-medium">
+                        <span class="mr-3 text-green-500"><svg class="w-5 h-5 text-green-500"><use xlink:href="#icon-check"></use></svg></span>Automated Article Generation
+                    </li>
+                    <li class="flex items-start text-base font-medium">
+                        <span class="mr-3 text-green-500"><svg class="w-5 h-5 text-green-500"><use xlink:href="#icon-check"></use></svg></span>Publish to StockWire X Website
+                    </li>
+                    <li class="flex items-start text-base font-medium">
+                        <span class="mr-3 text-green-500"><svg class="w-5 h-5 text-green-500"><use xlink:href="#icon-check"></use></svg></span>Premium Social Channel Distribution
+                    </li>
+                    <li class="flex items-start text-base font-medium">
+                        <span class="mr-3 text-green-500"><svg class="w-5 h-5 text-green-500"><use xlink:href="#icon-check"></use></svg></span>Automated Video Generation
+                    </li>
+                    <li class="flex items-start text-base font-medium text-gray-400">
+                        <span class="mr-3 text-gray-400"><svg class="w-5 h-5 text-gray-400"><use xlink:href="#icon-x"></use></svg></span>Dedicated Account Manager
+                    </li>
+                    <li class="flex items-start text-base font-medium text-gray-400">
+                        <span class="mr-3 text-gray-400"><svg class="w-5 h-5 text-gray-400"><use xlink:href="#icon-x"></use></svg></span>Priority Feature Access
+                    </li>
+                </ul>
+            </div>
+
+            <!-- Card 3: Gold (Most Popular - Visual Highlight) -->
+            <div id="gold-card" class="gold-gradient rounded-3xl shadow-2xl p-8 flex flex-col ring-4 ring-accent-gold transition-all duration-500 scale-100 md:scale-[1.06] transform -translate-y-4 hover:ring-8 hover:ring-accent-gold/75">
+                <div class="flex justify-between items-center mb-2">
+                    <h2 class="text-3xl font-poppins font-bold text-white">Gold</h2>
+                    <span class="bg-accent-gold text-primary-navy text-xs font-poppins font-bold uppercase py-1.5 px-4 rounded-full shadow-lg">Most Popular</span>
+                </div>
+                <p class="text-gray-300 mb-6 font-medium">The complete, premium media solution.</p>
+
+                <div class="flex items-end mb-8">
+                    <span id="gold-price" class="text-5xl font-poppins font-extrabold text-accent-gold">$2,999</span>
+                    <span id="gold-period" class="ml-2 text-2xl text-gray-300 font-light">/ Quarter</span>
+                </div>
+
+                <a href="#" class="cta-button w-full text-center py-4 rounded-xl bg-accent-orange text-white font-poppins text-xl font-bold shadow-2xl hover:bg-opacity-90 transition duration-300 transform hover:scale-[1.01] ring-2 ring-transparent hover:ring-white/50">
+                    Get Started with Gold
+                </a>
+
+                <p class="mt-4 mb-6 text-sm text-center text-gray-400 font-medium">Money-back guarantee. Cancel anytime.</p>
+
+                <ul class="space-y-4 flex-grow mt-6">
+                    <li class="flex items-start text-base font-medium text-white">
+                        <span class="mr-3 text-accent-gold"><svg class="w-5 h-5 text-accent-gold"><use xlink:href="#icon-check"></use></svg></span>Automated Article Generation
+                    </li>
+                    <li class="flex items-start text-base font-medium text-white">
+                        <span class="mr-3 text-accent-gold"><svg class="w-5 h-5 text-accent-gold"><use xlink:href="#icon-check"></use></svg></span>Publish to StockWire X Website
+                    </li>
+                    <li class="flex items-start text-base font-medium text-white">
+                        <span class="mr-3 text-accent-gold"><svg class="w-5 h-5 text-accent-gold"><use xlink:href="#icon-check"></use></svg></span>Premium Social Channel Distribution
+                    </li>
+                    <li class="flex items-start text-base font-medium text-white">
+                        <span class="mr-3 text-accent-gold"><svg class="w-5 h-5 text-accent-gold"><use xlink:href="#icon-check"></use></svg></span>Automated Video Generation
+                    </li>
+                    <li class="flex items-start text-base font-medium text-white">
+                        <span class="mr-3 text-accent-gold"><svg class="w-5 h-5 text-accent-gold"><use xlink:href="#icon-check"></use></svg></span>Dedicated Account Manager
+                    </li>
+                    <li class="flex items-start text-base font-medium text-white">
+                        <span class="mr-3 text-accent-gold"><svg class="w-5 h-5 text-accent-gold"><use xlink:href="#icon-check"></use></svg></span>Priority Feature Access
+                    </li>
+                </ul>
+            </div>
+
+        </section>
+
+        <!-- Detailed Comparison Table Section -->
+        <section class="mb-24">
+            <h2 class="text-4xl font-poppins font-bold text-center mb-10">Detailed Feature Comparison</h2>
+
+            <!-- Mobile: Horizontal Scroll for readability -->
+            <div class="scroll-container overflow-x-auto rounded-xl shadow-2xl border border-gray-200">
+                <table class="min-w-full divide-y divide-gray-200 bg-white">
+                    <thead class="bg-primary-navy/95">
+                        <tr>
+                            <th class="px-6 py-4 text-left text-sm font-poppins font-bold uppercase tracking-wider text-gray-200 sticky left-0 bg-primary-navy/95 z-10 w-52">Feature Detail</th>
+                            <th class="px-6 py-4 text-center text-sm font-poppins font-bold uppercase tracking-wider text-gray-200 w-32">Bronze</th>
+                            <th class="px-6 py-4 text-center text-sm font-poppins font-bold uppercase tracking-wider text-gray-200 w-32">Silver</th>
+                            <th class="px-6 py-4 text-center text-sm font-poppins font-bold uppercase tracking-wider text-accent-gold w-32 bg-primary-navy">Gold <span class="text-xs block font-normal">(Best Value)</span></th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-gray-100">
+                        <!-- Row 1: Article Generation -->
+                        <tr class="odd:bg-gray-50">
+                            <td class="px-6 py-5 whitespace-nowrap text-base font-medium text-primary-navy sticky left-0 bg-white odd:bg-gray-50">Automated Article Generation</td>
+                            <td class="px-6 py-5 whitespace-nowrap text-center">
+                                <span class="text-green-500 text-lg"><svg class="w-5 h-5 inline-block text-green-500"><use xlink:href="#icon-check"></use></svg></span>
+                            </td>
+                            <td class="px-6 py-5 whitespace-nowrap text-center">
+                                <span class="text-green-500 text-lg"><svg class="w-5 h-5 inline-block text-green-500"><use xlink:href="#icon-check"></use></svg></span>
+                            </td>
+                            <td class="px-6 py-5 whitespace-nowrap text-center bg-primary-navy/5">
+                                <span class="text-accent-gold text-lg"><svg class="w-5 h-5 inline-block text-accent-gold"><use xlink:href="#icon-check"></use></svg></span>
+                            </td>
+                        </tr>
+                        <!-- Row 2: Video Generation -->
+                        <tr class="odd:bg-gray-50">
+                            <td class="px-6 py-5 whitespace-nowrap text-base font-medium text-primary-navy sticky left-0 bg-white odd:bg-gray-50">Automated Video Generation (SD)</td>
+                            <td class="px-6 py-5 whitespace-nowrap text-center">
+                                <span class="text-gray-400 text-lg"><svg class="w-5 h-5 inline-block text-gray-400"><use xlink:href="#icon-x"></use></svg></span>
+                            </td>
+                            <td class="px-6 py-5 whitespace-nowrap text-center">
+                                <span class="text-green-500 text-lg"><svg class="w-5 h-5 inline-block text-green-500"><use xlink:href="#icon-check"></use></svg></span>
+                            </td>
+                            <td class="px-6 py-5 whitespace-nowrap text-center bg-primary-navy/5">
+                                <span class="text-accent-gold text-lg"><svg class="w-5 h-5 inline-block text-accent-gold"><use xlink:href="#icon-check"></use></svg></span>
+                            </td>
+                        </tr>
+                        <!-- Row 3: Website Publishing -->
+                        <tr class="odd:bg-gray-50">
+                            <td class="px-6 py-5 whitespace-nowrap text-base font-medium text-primary-navy sticky left-0 bg-white odd:bg-gray-50">Publish to StockWire X Website</td>
+                            <td class="px-6 py-5 whitespace-nowrap text-center">
+                                <span class="text-green-500 text-lg"><svg class="w-5 h-5 inline-block text-green-500"><use xlink:href="#icon-check"></use></svg></span>
+                            </td>
+                            <td class="px-6 py-5 whitespace-nowrap text-center">
+                                <span class="text-green-500 text-lg"><svg class="w-5 h-5 inline-block text-green-500"><use xlink:href="#icon-check"></use></svg></span>
+                            </td>
+                            <td class="px-6 py-5 whitespace-nowrap text-center bg-primary-navy/5">
+                                <span class="text-accent-gold text-lg"><svg class="w-5 h-5 inline-block text-accent-gold"><use xlink:href="#icon-check"></use></svg></span>
+                            </td>
+                        </tr>
+                        <!-- Row 4: Social Distribution -->
+                        <tr class="odd:bg-gray-50">
+                            <td class="px-6 py-5 whitespace-nowrap text-base font-medium text-primary-navy sticky left-0 bg-white odd:bg-gray-50">Social Channel Distribution</td>
+                            <td class="px-6 py-5 whitespace-nowrap text-center text-sm text-gray-500">Basic (2 Channels)</td>
+                            <td class="px-6 py-5 whitespace-nowrap text-center text-sm text-gray-500">Premium (5 Channels)</td>
+                            <td class="px-6 py-5 whitespace-nowrap text-center text-sm text-accent-gold bg-primary-navy/5 font-semibold">Premium + Priority (7 Channels)</td>
+                        </tr>
+                        <!-- Row 5: Account Manager -->
+                        <tr class="odd:bg-gray-50">
+                            <td class="px-6 py-5 whitespace-nowrap text-base font-medium text-primary-navy sticky left-0 bg-white odd:bg-gray-50">Dedicated Account Manager</td>
+                            <td class="px-6 py-5 whitespace-nowrap text-center">
+                                <span class="text-gray-400 text-lg"><svg class="w-5 h-5 inline-block text-gray-400"><use xlink:href="#icon-x"></use></svg></span>
+                            </td>
+                            <td class="px-6 py-5 whitespace-nowrap text-center">
+                                <span class="text-gray-400 text-lg"><svg class="w-5 h-5 inline-block text-gray-400"><use xlink:href="#icon-x"></use></svg></span>
+                            </td>
+                            <td class="px-6 py-5 whitespace-nowrap text-center bg-primary-navy/5">
+                                <span class="text-accent-gold text-lg"><svg class="w-5 h-5 inline-block text-accent-gold"><use xlink:href="#icon-check"></use></svg></span>
+                            </td>
+                        </tr>
+                        <!-- Row 6: Feature Access -->
+                        <tr class="odd:bg-gray-50">
+                            <td class="px-6 py-5 whitespace-nowrap text-base font-medium text-primary-navy sticky left-0 bg-white odd:bg-gray-50">Priority Feature Access</td>
+                            <td class="px-6 py-5 whitespace-nowrap text-center">
+                                <span class="text-gray-400 text-lg"><svg class="w-5 h-5 inline-block text-gray-400"><use xlink:href="#icon-x"></use></svg></span>
+                            </td>
+                            <td class="px-6 py-5 whitespace-nowrap text-center">
+                                <span class="text-gray-400 text-lg"><svg class="w-5 h-5 inline-block text-gray-400"><use xlink:href="#icon-x"></use></svg></span>
+                            </td>
+                            <td class="px-6 py-5 whitespace-nowrap text-center bg-primary-navy/5">
+                                <span class="text-accent-gold text-lg"><svg class="w-5 h-5 inline-block text-accent-gold"><use xlink:href="#icon-check"></use></svg></span>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <!-- CTA beneath comparison table -->
+            <div class="text-center mt-12">
+                 <a href="#" class="inline-block px-10 py-4 bg-accent-orange text-white font-poppins text-xl rounded-xl shadow-2xl hover:bg-opacity-90 transition duration-300 transform hover:scale-[1.05]">
+                    Start Driving Conversions Now
+                </a>
+            </div>
+        </section>
+
+        <!-- FAQ Section (existing code...) -->
+        <section class="mb-20">
+            <h2 class="text-4xl font-poppins font-bold text-center mb-10">Frequently Asked Questions</h2>
+            <div class="max-w-4xl mx-auto space-y-4">
+                <!-- FAQ Item 1 -->
+                <div class="bg-white p-6 rounded-xl shadow-xl border-t-4 border-accent-orange/50 cursor-pointer group transition duration-300 hover:shadow-2xl">
+                    <div class="flex justify-between items-center text-lg font-semibold text-primary-navy group-hover:text-accent-orange transition duration-300">
+                        Can I change the copy?
+                        <span class="text-3xl transform group-hover:rotate-180 transition duration-300 font-light">+</span>
+                    </div>
+                    <p class="mt-4 text-gray-700 hidden group-hover:block transition duration-500 font-medium">
+                        No, the core service is built around transforming your existing ASX announcements. Formatting and emphasis can be adjusted, but the content integrity remains tied to the official announcement.
+                    </p>
+                </div>
+                <!-- FAQ Item 2 -->
+                <div class="bg-white p-6 rounded-xl shadow-xl border-t-4 border-accent-orange/50 cursor-pointer group transition duration-300 hover:shadow-2xl">
+                    <div class="flex justify-between items-center text-lg font-semibold text-primary-navy group-hover:text-accent-orange transition duration-300">
+                        Is there a lock-in contract?
+                        <span class="text-3xl transform group-hover:rotate-180 transition duration-300 font-light">+</span>
+                    </div>
+                    <p class="mt-4 text-gray-700 hidden group-hover:block transition duration-500 font-medium">
+                        All our plans are available on a Quarterly basis with no lock-in contract. Annual plans offer a 40% saving for those committed to year-round coverage. You can cancel at the end of any period.
+                    </p>
+                </div>
+                 <!-- FAQ Item 3 -->
+                <div class="bg-white p-6 rounded-xl shadow-xl border-t-4 border-accent-orange/50 cursor-pointer group transition duration-300 hover:shadow-2xl">
+                    <div class="flex justify-between items-center text-lg font-semibold text-primary-navy group-hover:text-accent-orange transition duration-300">
+                        How does the 40% saving on annual plans work?
+                        <span class="text-3xl transform group-hover:rotate-180 transition duration-300 font-light">+</span>
+                    </div>
+                    <p class="mt-4 text-gray-700 hidden group-hover:block transition duration-500 font-medium">
+                        The annual price reflects a 40% discount compared to paying the quarterly fee four times. This is our best value option for sustained market presence.
+                    </p>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- New Multi-Column Footer based on screenshot -->
+    <footer class="bg-primary-navy text-white font-inter">
+        <div class="max-w-7xl mx-auto px-4 py-16 grid grid-cols-1 gap-12 sm:grid-cols-2 lg:grid-cols-5 lg:gap-8">
+            
+            <!-- Column 1: Logo and Description -->
+            <div class="lg:col-span-1">
+                <h3 class="text-xl font-poppins font-bold text-accent-gold mb-6 tracking-wider">STOCK WIRE X</h3>
+                <p class="text-sm text-gray-400 leading-relaxed">
+                    StockWire X is an independent, AI-power of financial media outlet delivering breaking news. We specialise in creating highly informative investor content at speed and scale, giving listed companies the edge in the market and greater exposure to a focused group of investors.
+                </p>
+            </div>
+
+            <!-- Column 2: ASX Categories -->
+            <div>
+                <h4 class="text-base font-poppins font-semibold mb-6 text-white uppercase tracking-wider">ASX Categories</h4>
+                <ul class="space-y-3 text-sm">
+                    <li><a href="#" class="text-gray-400 hover:text-accent-gold transition">Biotech & Health</a></li>
+                    <li><a href="#" class="text-gray-400 hover:text-accent-gold transition">Communication & Media</a></li>
+                    <li><a href="#" class="text-gray-400 hover:text-accent-gold transition">Consumer Discretionary</a></li>
+                    <li><a href="#" class="text-gray-400 hover:text-accent-gold transition">Consumer Staples</a></li>
+                    <li><a href="#" class="text-gray-400 hover:text-accent-gold transition">Financials & Fintech</a></li>
+                    <li><a href="#" class="text-gray-400 hover:text-accent-gold transition">Industrials</a></li>
+                    <li><a href="#" class="text-gray-400 hover:text-accent-gold transition">Real Estate & REITs</a></li>
+                    <li><a href="#" class="text-gray-400 hover:text-accent-gold transition">Tech & AI</a></li>
+                    <li><a href="#" class="text-gray-400 hover:text-accent-gold transition">Utilities</a></li>
+                </ul>
+            </div>
+
+            <!-- Column 3: Contact Us -->
+            <div>
+                <h4 class="text-base font-poppins font-semibold mb-6 text-white uppercase tracking-wider">Contact Us</h4>
+                <div class="space-y-4 text-sm">
+                    <div class="flex items-start text-gray-400">
+                        <span class="text-lg text-accent-gold mt-1" dangerously-set-inner-html>
+                            <svg class="w-5 h-5 mr-2 flex-shrink-0" aria-hidden="true"><use xlink:href="#icon-map"></use></svg>
+                        </span>
+                        <div>
+                            <span class="text-white font-medium">StockWire X</span><br>
+                            202/37 Barrack St<br>
+                            Perth WA 6000
+                        </div>
+                    </div>
+                    <div class="flex items-center text-gray-400">
+                        <span class="text-lg text-accent-gold" dangerously-set-inner-html>
+                            <svg class="w-5 h-5 mr-2 flex-shrink-0" aria-hidden="true"><use xlink:href="#icon-phone"></use></svg>
+                        </span>
+                        1300 786 259
+                    </div>
+                    <a href="mailto:admin@stockwirex.com" class="flex items-center text-gray-400 hover:text-accent-gold transition">
+                        <span class="text-lg text-accent-gold" dangerously-set-inner-html>
+                            <svg class="w-5 h-5 mr-2 flex-shrink-0" aria-hidden="true"><use xlink:href="#icon-mail"></use></svg>
+                        </span>
+                        admin@stockwirex.com
+                    </a>
+                </div>
+            </div>
+
+            <!-- Column 4: Socials -->
+            <div>
+                <h4 class="text-base font-poppins font-semibold mb-6 text-white uppercase tracking-wider">Socials</h4>
+                <ul class="space-y-3 text-sm">
+                    <li>
+                        <a href="#" class="flex items-center text-gray-400 hover:text-accent-gold transition">
+                            <span class="text-accent-gold" dangerously-set-inner-html><svg class="w-5 h-5 mr-2 flex-shrink-0" aria-hidden="true"><use xlink:href="#icon-facebook"></use></svg></span>
+                            Facebook
+                        </a>
+                    </li>
+                    <li>
+                        <a href="#" class="flex items-center text-gray-400 hover:text-accent-gold transition">
+                            <span class="text-accent-gold" dangerously-set-inner-html><svg class="w-5 h-5 mr-2 flex-shrink-0" aria-hidden="true"><use xlink:href="#icon-twitter"></use></svg></span>
+                            X (Twitter)
+                        </a>
+                    </li>
+                    <li>
+                        <a href="#" class="flex items-center text-gray-400 hover:text-accent-gold transition">
+                            <span class="text-accent-gold" dangerously-set-inner-html><svg class="w-5 h-5 mr-2 flex-shrink-0" aria-hidden="true"><use xlink:href="#icon-linkedin"></use></svg></span>
+                            LinkedIn
+                        </a>
+                    </li>
+                    <li>
+                        <a href="#" class="flex items-center text-gray-400 hover:text-accent-gold transition">
+                            <span class="text-accent-gold" dangerously-set-inner-html><svg class="w-5 h-5 mr-2 flex-shrink-0" aria-hidden="true"><use xlink:href="#icon-youtube"></use></svg></span>
+                            YouTube
+                        </a>
+                    </li>
+                    <li>
+                        <a href="#" class="flex items-center text-gray-400 hover:text-accent-gold transition">
+                            <span class="text-accent-gold" dangerously-set-inner-html><svg class="w-5 h-5 mr-2 flex-shrink-0" aria-hidden="true"><use xlink:href="#icon-tiktok"></use></svg></span>
+                            TikTok
+                        </a>
+                    </li>
+                    <li>
+                        <a href="#" class="flex items-center text-gray-400 hover:text-accent-gold transition">
+                            <span class="text-accent-gold" dangerously-set-inner-html><svg class="w-5 h-5 mr-2 flex-shrink-0" aria-hidden="true"><use xlink:href="#icon-instagram"></use></svg></span>
+                            Instagram
+                        </a>
+                    </li>
+                    <li>
+                        <a href="#" class="flex items-center text-gray-400 hover:text-accent-gold transition">
+                            <span class="text-accent-gold" dangerously-set-inner-html><svg class="w-5 h-5 mr-2 flex-shrink-0" aria-hidden="true"><use xlink:href="#icon-threads"></use></svg></span>
+                            Threads
+                        </a>
+                    </li>
+                </ul>
+            </div>
+
+            <!-- Column 5: Breaking ASX Alerts (Newsletter) -->
+            <div class="lg:col-span-1">
+                <h4 class="text-base font-poppins font-semibold mb-6 text-white uppercase tracking-wider">Breaking ASX Alerts</h4>
+                <p class="text-sm text-gray-400 mb-4">
+                    Join 20,000+ subscribers and never miss market-moving news again.
+                </p>
+                <!-- Newsletter Form -->
+                <form class="space-y-3">
+                    <input type="email" placeholder="Email" class="w-full p-3 rounded-lg text-primary-navy font-inter font-medium focus:ring-2 focus:ring-accent-gold focus:border-accent-gold/50 border-0 shadow-lg" required>
+                    <button type="submit" class="w-full py-3 bg-accent-orange text-white font-poppins font-semibold rounded-lg shadow-lg hover:bg-opacity-90 transition duration-300 transform hover:scale-[1.01]">
+                        Get "Big News" Alerts →
+                    </button>
+                </form>
+                <p class="text-xs text-gray-500 mt-3 italic">
+                    No spam policy, unsubscribe any time.
+                </p>
+            </div>
+
+        </div>
+
+        <!-- Copyright and Legal Strip -->
+        <div class="border-t border-primary-navy/70 bg-primary-navy/95">
+            <div class="max-w-7xl mx-auto px-4 py-4 flex flex-col md:flex-row justify-between items-center text-xs">
+                <p class="text-gray-500 mb-3 md:mb-0">
+                    © 2025 StockWire X Pty Ltd. All rights reserved.
+                </p>
+                <div class="flex flex-wrap justify-center space-x-4">
+                    <a href="#" class="text-gray-400 hover:text-accent-gold transition font-medium">Terms of Use</a>
+                    <span class="text-gray-500">|</span>
+                    <a href="#" class="text-gray-400 hover:text-accent-gold transition font-medium">Subscription Terms of Service</a>
+                    <span class="text-gray-500">|</span>
+                    <a href="#" class="text-gray-400 hover:text-accent-gold transition font-medium">Privacy Policy</a>
+                    <span class="text-gray-500">|</span>
+                    <a href="#" class="text-gray-400 hover:text-accent-gold transition font-medium">Cookies Policy</a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+
+    <!-- JavaScript for Pricing Toggle Logic -->
+    <script>
+        const pricingData = {
+            quarterly: {
+                bronze: { price: '$999', period: '/ Quarter' },
+                silver: { price: '$1,999', period: '/ Quarter' },
+                gold: { price: '$2,999', period: '/ Quarter' }
+            },
+            annual: {
+                // Annual price is Quarterly * 4 * 0.6 (40% discount)
+                bronze: { price: '$2,398', period: '/ Year' }, 
+                silver: { price: '$4,798', period: '/ Year' }, 
+                gold: { price: '$7,198', period: '/ Year' }   
+            }
+        };
+
+        const toggle = document.getElementById('pricing-toggle');
+        const buttons = toggle.querySelectorAll('.toggle-button');
+        const savingsBadge = document.getElementById('savings-badge');
+
+        const updatePricing = (plan) => {
+            // Update prices
+            document.getElementById('bronze-price').textContent = pricingData[plan].bronze.price;
+            document.getElementById('bronze-period').textContent = pricingData[plan].bronze.period;
+            document.getElementById('silver-price').textContent = pricingData[plan].silver.price;
+            document.getElementById('silver-period').textContent = pricingData[plan].silver.period;
+            document.getElementById('gold-price').textContent = pricingData[plan].gold.price;
+            document.getElementById('gold-period').textContent = pricingData[plan].gold.period;
+
+            // Update toggle styling
+            buttons.forEach(button => {
+                if (button.dataset.plan === plan) {
+                    button.classList.add('toggle-active');
+                    button.classList.remove('toggle-inactive');
+                } else {
+                    button.classList.remove('toggle-active');
+                    button.classList.add('toggle-inactive');
+                }
+            });
+
+            // Show/hide savings badge
+            if (plan === 'annual') {
+                savingsBadge.classList.remove('hidden');
+            } else {
+                savingsBadge.classList.add('hidden');
+            }
+        };
+
+        buttons.forEach(button => {
+            button.addEventListener('click', () => {
+                updatePricing(button.dataset.plan);
+            });
+        });
+
+        // Initialize with Quarterly view
+        updatePricing('quarterly');
+
+    </script>
+</body>
+</html>
